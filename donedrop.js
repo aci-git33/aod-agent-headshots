@@ -1,41 +1,35 @@
 (function(){
-var host=document.currentScript&&document.currentScript.parentNode||document.body;
-var wrap=document.createElement('div');
-wrap.innerHTML='<h2 class="sr-only">Done Drop: an 8-bit pixel cat walks right, drops a surprise fruit, then sits and licks its paw.</h2>'+
-'<div style="background:var(--bg-neutral);border-radius:12px;padding:8px 0 4px;"><canvas style="display:block;width:100%;height:96px;image-rendering:pixelated"></canvas></div>'+
-'<div style="text-align:center;margin-top:10px"><button type="button">Drop another</button></div>';
-host.appendChild(wrap);
-var cv=wrap.querySelector('canvas'),btn=wrap.querySelector('button'),ctx=cv.getContext('2d');
-var C={O:'#EF9F27',D:'#BA7517',K:'#2C2C2A',P:'#ED93B1',R:'#E24B4A',G:'#639922',Y:'#FAC775',V:'#7F77DD',U:'#534AB7'};
-var head=["..........O...O.","..........OO.OO."];
-var walkA=head.concat(["O.........OOOOOO","O.........OKOOKO",".O........OOOPOO",".OOOOOOOOOOOOOO.","..OODOODOODOOO..","..OOOOOOOOOOOO..","..OO.O....O.OO..","..O..O....O..O.."]);
-var walkB=head.concat(["O.........OOOOOO","O.........OKOOKO",".O........OOOPOO",".OOOOOOOOOOOOOO.","..OODOODOODOOO..","..OOOOOOOOOOOO..","...O.O....O.O...","...O.O....O.O..."]);
-var sit=head.concat(["..........OOOOOO","..........OKOOKO","..........OOOPOO",".........OOOOOO.","........OOOOOO..","........ODOODO..","........OOOOOO..","OOOOOOOOOOO.OO.."]);
-var lick=head.concat(["..........OOOOOO","..........ODOODO","..........OOOOPO",".........OOOOOOO","........OOOOOOO.","........ODOODO..","........OOOOOO..","OOOOOOOOOOO..O.."]);
-var fruits=[
-{name:'Apple',spr:["..G..",".RRR.","RRRRR","RRRRR",".RRR."]},
-{name:'Banana',spr:["....YK","...YY.","..YYY.","YYYY..",".YY..."]},
-{name:'Grapes',spr:["..G..",".VVV.","VUVUV",".VUV.","..V.."]},
-{name:'Strawberry',spr:["GGGGG","RYRRR","RRRYR",".RYR.","..R.."]},
-{name:'Watermelon',spr:["RRKRRKR","GRRRRRG",".GRKRG.","..GGG.."]}];
-var S=4,timer,last=-1;
-function draw(spr,x,y){spr.forEach(function(row,j){row.split('').forEach(function(ch,i){if(ch!=='.'){ctx.fillStyle=C[ch];ctx.fillRect(Math.round(x+i*S),Math.round(y+j*S),S,S)}})})}
+var H0=document.currentScript&&document.currentScript.parentNode||document.body;
+var W0=document.createElement('div');
+W0.innerHTML="<h2 class=\"sr-only\">Done Drop: a 16-bit pixel cat walks right, drops a surprise fruit, then sits and turns its head and licks its paw.</h2>\n<div style=\"background:var(--bg-neutral);border-radius:12px;padding:8px 0 4px;\">\n<canvas style=\"display:block;width:100%;height:96px;image-rendering:pixelated\"></canvas>\n</div>\n<div style=\"text-align:center;margin-top:10px\"><button type=\"button\">Drop another</button></div>";
+H0.appendChild(W0);
+const C={"k": "#3A2418", "o": "#F0A23A", "h": "#FFD08A", "d": "#C47222", "s": "#A3561A", "w": "#FFF4E6", "p": "#F4A3B8", "e": "#6BBF59", "b": "#1E1E1E", "n": "#6B3E1E", "r": "#E0393E", "R": "#A11E2B", "l": "#FF7A6E", "W": "#FFFFFF", "g": "#5DAE3B", "G": "#3B7A26", "y": "#FFD447", "Y": "#D9A21B", "v": "#8E6BE0", "V": "#5A3DB0", "m": "#B9A2F5", "t": "#8BD16A"};
+const walkA=["..............k.....k...", ".............kpk...kpk..", ".kk..........kppkkkkppk.", "kohk........kohhhhhhhhok", "kosk........koooosoooook", "kook........koobeooobeok", ".kosk.......kooswnnwsook", ".kook........kdwkwwkwdk.", "..kokkkkkkkkkkkdwwwwwdk.", "...kkhhhhhhhhhhhhooowwk.", "....koosooosooosoooowwk.", "....kosooosooosoooooowk.", "....kdooooooooooooooowk.", "....kdddoooooooooooddk..", ".....kdddddddddddddkk...", ".....kok.kok...kok.kok..", "....kdk..kdk...kdk..kdk.", "....kok..kok...kok..kok.", "....kwk..kwk...kwk..kwk."],walkB=["..............k.....k...", ".............kpk...kpk..", ".kk..........kppkkkkppk.", "kohk........kohhhhhhhhok", "kosk........koooosoooook", "kook........koobeooobeok", ".kosk.......kooswnnwsook", ".kook........kdwkwwkwdk.", "..kokkkkkkkkkkkdwwwwwdk.", "...kkhhhhhhhhhhhhooowwk.", "....koosooosooosoooowwk.", "....kosooosooosoooooowk.", "....kdooooooooooooooowk.", "....kdddoooooooooooddk..", ".....kdddddddddddddkk...", "......kokok.....kokok...", "......kdkdk.....kdkdk...", "......kokok.....kokok...", "......kwkwk.....kwkwk..."],sit=[".............k.....k....", "............kpk...kpk...", "............kppkkkkppk..", "...........kohhhhhhhhok.", "...........koooosoooook.", "...........koobeooobeok.", "...........kooswnnwsook.", "............kdwkwwkwdk..", ".............kdwwwwwdk..", "..........khhoooooowwk..", "..........kohsoooooowk..", ".........kooosoooooowk..", ".........kdooosooooowk..", ".........kdoooooooowk...", ".........kddoooooookok..", ".........kdddoodddkok...", "kkkkkkkkkkdddddddkwk....", "kooosoooookkkkkkkkkk....", "kkkkkkkkkk.............."];
+const prof=["............k....k..........", "...........kpk..kpk.........", "...........kppkkkppk........", "..........kohhhhhhhok.......", ".........kooosoooooook......", ".........koosoooooebok......", ".........kooossoooowwwk.....", ".........kdoooooowwwwnk.....", "..........kddddwwkkkkk......", "..........kkkkkkkkowwk......", "..........kohsoooooowk......", ".........kooosoooooowk......", ".........kdooosooooowk......", ".........kdoooooooowk.......", ".........kddoooooookok......", ".........kdddoodddkok.......", "kkkkkkkkkkdddddddkwk........", "kooosoooookkkkkkkkkk........", "kkkkkkkkkk.................."],L1=["............k....k..........", "...........kpk..kpk.........", "...........kppkkkppk........", "..........kohhhhhhhok.......", ".........kooosoooooook......", ".........koosoooooebok......", ".........kooossoooowwwk.....", ".........kdoooooowwwwnk.....", "..........kddddwwkkkkk......", "..........kkkkkkkkowwk......", "..........kohsoooooowkkkkk..", ".........kooosoooooowkkwwwk.", ".........kdooosooooowkkwwwk.", ".........kdoooooooowk.kkkk..", ".........kddoooooookokok....", ".........kdddoodddkokok.....", "kkkkkkkkkkdddddddkwk........", "kooosoooookkkkkkkkkk........", "kkkkkkkkkk.................."],L2=["............k....k..........", "...........kpk..kpk.........", "...........kppkkkppk........", "..........kohhhhhhhok.......", ".........kooosoooooook......", ".........koosoooooebok......", ".........kooossoooowwwk.....", ".........kdoooooowwwwnk.....", "..........kddddwwkkkkkpkkk..", "..........kkkkkkkkowwkkwwwk.", "..........kohsoooooowkkwwwk.", ".........kooosoooooowkkkkk..", ".........kdooosooooowkok....", ".........kdoooooooowkok.....", ".........kddoooooookok......", ".........kdddoodddkok.......", "kkkkkkkkkkdddddddkwk........", "kooosoooookkkkkkkkkk........", "kkkkkkkkkk.................."],L3=["............k....k..........", "...........kpk..kpk.........", "...........kppkkkppk........", "..........kohhhhhhhok.......", ".........kooosoooooook......", ".........koosoooookkok......", ".........kooossoooowwwk.....", ".........kdoooooowwwwnkpkk..", "..........kddddwwkkkkkpwwwk.", "..........kkkkkkkkowwkkwwwk.", "..........kohsoooooowkkkkk..", ".........kooosoooooowkok....", ".........kdooosoooookok.....", ".........kdoooooooowk.......", ".........kddoooooookok......", ".........kdddoodddkok.......", "kkkkkkkkkkdddddddkwk........", "kooosoooookkkkkkkkkk........", "kkkkkkkkkk.................."],L4=["............k....k..........", "...........kpk..kpk.........", "...........kppkkkppk........", "..........kohhhhhhhok.......", ".........kooosoooooook......", ".........koosoooookkok......", ".........kooossoooowwwk.....", ".........kdoooooowwwwnk.....", "..........kddddwwkkkkkpkkk..", "..........kkkkkkkkowwkkwwwk.", "..........kohsoooooowkkwwwk.", ".........kooosoooooowkkkkk..", ".........kdooosooooowkok....", ".........kdoooooooowkok.....", ".........kddoooooookok......", ".........kdddoodddkok.......", "kkkkkkkkkkdddddddkwk........", "kooosoooookkkkkkkkkk........", "kkkkkkkkkk.................."];
+const seq=[...Array(8).fill(sit),...Array(3).fill(prof),L1,L1,L2,L2,L3,L3,L4,L4,L3,L3,L4,L4,L3,L3,L4,L4,L2,L2,L1,L1,...Array(3).fill(prof)];
+const fruits=[{"name": "Apple", "spr": ["....n.g..", "....ngg..", ".kkkkkkk.", "krlWrrrRk", "krlrrrrRk", "krrrrrrRk", "kRrrrrRRk", ".kRRRRRk.", "..kkkkk.."]}, {"name": "Banana", "spr": ["........nk", ".......kyk", "......kyyk", ".....kyWyk", "kk..kyyyYk", "kyyyyyyYk.", ".kYYYYYk..", "..kkkkk..."]}, {"name": "Grapes", "spr": ["....n....", "..ggnG...", ".kkk.kkk.", "kmvVkmvVk", "kvVVkvVVk", ".kkmvVkk.", "..kvVVk..", "..kvVVk..", "...kkk..."]}, {"name": "Strawberry", "spr": ["..GgGgG..", ".kgGgGgk.", "krWrryrrk", "krrryrrRk", "kryrrryRk", ".krrryRk.", ".kRyrRRk.", "..kRRRk..", "...kkk..."]}, {"name": "Watermelon", "spr": ["kkkkkkkkkkk", "krrkrrrkrrk", ".krrrrkrrk.", ".kWrrrrrWk.", "..ktWWWtk..", "...kGGGk...", "....kkk...."]}];
+const S=3,cv=W0.querySelector('canvas'),ctx=cv.getContext('2d');let timer,last=-1;
+function draw(spr,x,y){spr.forEach((row,j)=>[...row].forEach((ch,i)=>{if(ch!=='.'){ctx.fillStyle=C[ch];ctx.fillRect(Math.round(x+i*S),Math.round(y+j*S),S,S)}}))}
+function ground(W,g){ctx.fillStyle='#7BB04A';ctx.fillRect(0,g,W,S);ctx.fillStyle='#4E8A2E';ctx.fillRect(0,g+S,W,S);ctx.fillStyle='#A8D46F';for(let i=6;i<W;i+=37){ctx.fillRect(i,g-S,S,S);ctx.fillRect(i+S*2,g-S*2,S,S*2)}}
+function shadow(x,w,g){ctx.fillStyle='rgba(0,0,0,0.18)';ctx.fillRect(x+S,g-S,w-S*2,S)}
 function run(){
-clearInterval(timer);var k;do{k=Math.floor(Math.random()*fruits.length)}while(k===last);last=k;var f=fruits[k];
-var r=cv.getBoundingClientRect(),dp=window.devicePixelRatio||1,W=r.width,H=r.height;
+clearInterval(timer);let k;do{k=Math.floor(Math.random()*fruits.length)}while(k===last);last=k;const f=fruits[k];
+const r=cv.getBoundingClientRect(),dp=window.devicePixelRatio||1,W=r.width,H=r.height;
 cv.width=W*dp;cv.height=H*dp;ctx.setTransform(dp,0,0,dp,0,0);ctx.imageSmoothingEnabled=false;
-var ground=H-12,catY=ground-10*S,rest=ground-f.spr.length*S,mid=W*0.32,end=W*0.62;
-var t=0,x=-16*S,phase='walk1',fx=null,fy=null,hold=0,lt=0;
-timer=setInterval(function(){
-ctx.clearRect(0,0,W,H);ctx.fillStyle='#888780';ctx.fillRect(0,ground,W,2);
-var fr;
+const g=H-14,catY=g-19*S,fw=f.spr[0].length*S,rest=g-f.spr.length*S,mid=W*0.32,end=W*0.62;
+let t=0,x=-24*S,phase='walk1',fx=null,fy=null,hold=0,lt=0,puff=-1;
+timer=setInterval(()=>{
+ctx.clearRect(0,0,W,H);ground(W,g);
+let fr;
 if(phase==='walk1'){x+=6;fr=t%2?walkA:walkB;if(x>=mid){phase='drop';hold=0}}
-else if(phase==='drop'){fr=walkA;hold++;if(hold===3){fx=x;fy=catY+3*S}if(hold>=8)phase='walk2'}
+else if(phase==='drop'){fr=walkA;hold++;if(hold===3){fx=x+S;fy=catY+12*S}if(hold>=8)phase='walk2'}
 else if(phase==='walk2'){x+=6;fr=t%2?walkA:walkB;if(x>=end)phase='sit'}
-else{lt++;var c=lt%20;fr=(c>=6&&c<16&&c%2===0)?lick:sit}
-if(fx!==null){if(fy<rest)fy=Math.min(rest,fy+S*2);draw(f.spr,fx,fy)}
-draw(fr,x,catY);t++;
+else{fr=seq[lt%seq.length];lt++}
+if(fx!==null){if(fy<rest){fy=Math.min(rest,fy+S*2);if(fy===rest)puff=0}
+shadow(fx,fw,g);draw(f.spr,fx,fy);
+if(puff>=0&&puff<5){ctx.fillStyle='#CFC8B8';const d=puff*S;ctx.fillRect(fx-S-d,g-S*2-puff,S,S);ctx.fillRect(fx+fw+d,g-S*2-puff,S,S);ctx.fillRect(fx-d,g-S-puff*2,S,S);ctx.fillRect(fx+fw-S+d,g-S-puff*2,S,S);puff++}
+if(fy===rest&&puff>=5&&t%8<4){ctx.fillStyle='#FFFFFF';const sx=fx+fw-S,sy=rest-S*2;ctx.fillRect(sx,sy-S,S,S*3);ctx.fillRect(sx-S,sy,S*3,S)}}
+shadow(x,24*S,g);draw(fr,x,catY);t++;
 },125)}
-btn.onclick=run;
-if(document.readyState==='complete')run();else window.addEventListener('load',run);
+W0.querySelector('button').onclick=run;run();
 })();
