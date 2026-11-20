@@ -1,7 +1,7 @@
 (function(){
 var H0=document.currentScript&&document.currentScript.parentNode||document.body;
 var W0=document.createElement('div');
-W0.innerHTML="<h2 class=\"sr-only\">Done Drop: a 16-bit pixel cat walks right, drops a surprise fruit, then sits and turns its head and licks its paw.</h2>\n<div style=\"background:var(--bg-neutral);border-radius:12px;padding:8px 0 4px;\">\n<canvas style=\"display:block;width:100%;height:96px;image-rendering:pixelated\"></canvas>\n</div>\n<div style=\"text-align:center;margin-top:10px\"><button type=\"button\">Drop another</button></div>";
+W0.innerHTML="<h2 class=\"sr-only\">Done Drop: a 16-bit pixel cat walks right, drops a surprise fruit with a fart sound, then sits and turns its head and licks its paw.</h2>\n<div style=\"background:var(--bg-neutral);border-radius:12px;padding:8px 0 4px;\">\n<canvas style=\"display:block;width:100%;height:96px;image-rendering:pixelated\"></canvas>\n</div>\n<div style=\"text-align:center;margin-top:10px\"><button type=\"button\">Drop another</button></div>";
 H0.appendChild(W0);
 const C={"k": "#3A2418", "o": "#F0A23A", "h": "#FFD08A", "d": "#C47222", "s": "#A3561A", "w": "#FFF4E6", "p": "#F4A3B8", "e": "#6BBF59", "b": "#1E1E1E", "n": "#6B3E1E", "r": "#E0393E", "R": "#A11E2B", "l": "#FF7A6E", "W": "#FFFFFF", "g": "#5DAE3B", "G": "#3B7A26", "y": "#FFD447", "Y": "#D9A21B", "v": "#8E6BE0", "V": "#5A3DB0", "m": "#B9A2F5", "t": "#8BD16A"};
 const walkA=["..............k.....k...", ".............kpk...kpk..", ".kk..........kppkkkkppk.", "kohk........kohhhhhhhhok", "kosk........koooosoooook", "kook........koobeooobeok", ".kosk.......kooswnnwsook", ".kook........kdwkwwkwdk.", "..kokkkkkkkkkkkdwwwwwdk.", "...kkhhhhhhhhhhhhooowwk.", "....koosooosooosoooowwk.", "....kosooosooosoooooowk.", "....kdooooooooooooooowk.", "....kdddoooooooooooddk..", ".....kdddddddddddddkk...", ".....kok.kok...kok.kok..", "....kdk..kdk...kdk..kdk.", "....kok..kok...kok..kok.", "....kwk..kwk...kwk..kwk."],walkB=["..............k.....k...", ".............kpk...kpk..", ".kk..........kppkkkkppk.", "kohk........kohhhhhhhhok", "kosk........koooosoooook", "kook........koobeooobeok", ".kosk.......kooswnnwsook", ".kook........kdwkwwkwdk.", "..kokkkkkkkkkkkdwwwwwdk.", "...kkhhhhhhhhhhhhooowwk.", "....koosooosooosoooowwk.", "....kosooosooosoooooowk.", "....kdooooooooooooooowk.", "....kdddoooooooooooddk..", ".....kdddddddddddddkk...", "......kokok.....kokok...", "......kdkdk.....kdkdk...", "......kokok.....kokok...", "......kwkwk.....kwkwk..."],sit=[".............k.....k....", "............kpk...kpk...", "............kppkkkkppk..", "...........kohhhhhhhhok.", "...........koooosoooook.", "...........koobeooobeok.", "...........kooswnnwsook.", "............kdwkwwkwdk..", ".............kdwwwwwdk..", "..........khhoooooowwk..", "..........kohsoooooowk..", ".........kooosoooooowk..", ".........kdooosooooowk..", ".........kdoooooooowk...", ".........kddoooooookok..", ".........kdddoodddkok...", "kkkkkkkkkkdddddddkwk....", "kooosoooookkkkkkkkkk....", "kkkkkkkkkk.............."];
@@ -12,6 +12,20 @@ const S=3,cv=W0.querySelector('canvas'),ctx=cv.getContext('2d');let timer,last=-
 function draw(spr,x,y){spr.forEach((row,j)=>[...row].forEach((ch,i)=>{if(ch!=='.'){ctx.fillStyle=C[ch];ctx.fillRect(Math.round(x+i*S),Math.round(y+j*S),S,S)}}))}
 function ground(W,g){ctx.fillStyle='#7BB04A';ctx.fillRect(0,g,W,S);ctx.fillStyle='#4E8A2E';ctx.fillRect(0,g+S,W,S);ctx.fillStyle='#A8D46F';for(let i=6;i<W;i+=37){ctx.fillRect(i,g-S,S,S);ctx.fillRect(i+S*2,g-S*2,S,S*2)}}
 function shadow(x,w,g){ctx.fillStyle='rgba(0,0,0,0.18)';ctx.fillRect(x+S,g-S,w-S*2,S)}
+var AC=null;
+function fart(){try{
+AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+var n=AC.currentTime,d=0.55+Math.random()*0.35,f0=70+Math.random()*40;
+var o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(f0*1.3,n);o.frequency.exponentialRampToValueAtTime(f0*0.7,n+d);
+var l=AC.createOscillator();l.type='square';l.frequency.setValueAtTime(18+Math.random()*10,n);
+var lg=AC.createGain();lg.gain.value=f0*0.35;l.connect(lg);lg.connect(o.frequency);
+var b=AC.createBuffer(1,AC.sampleRate*d,AC.sampleRate),c=b.getChannelData(0);for(var i=0;i<c.length;i++)c[i]=Math.random()*2-1;
+var ns=AC.createBufferSource();ns.buffer=b;var nf=AC.createBiquadFilter();nf.type='bandpass';nf.frequency.value=180;nf.Q.value=1.2;var ng=AC.createGain();ng.gain.value=0.35;
+var lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(900,n);lp.frequency.exponentialRampToValueAtTime(250,n+d);lp.Q.value=6;
+var g=AC.createGain();g.gain.setValueAtTime(0.0001,n);g.gain.exponentialRampToValueAtTime(0.6,n+0.03);g.gain.setValueAtTime(0.6,n+d*0.7);g.gain.exponentialRampToValueAtTime(0.0001,n+d);
+o.connect(lp);ns.connect(nf);nf.connect(ng);ng.connect(lp);lp.connect(g);g.connect(AC.destination);
+o.start(n);l.start(n);ns.start(n);o.stop(n+d);l.stop(n+d);ns.stop(n+d);
+}catch(e){}}
 function run(){
 clearInterval(timer);let k;do{k=Math.floor(Math.random()*fruits.length)}while(k===last);last=k;const f=fruits[k];
 const r=cv.getBoundingClientRect(),dp=window.devicePixelRatio||1,W=r.width,H=r.height;
@@ -22,7 +36,7 @@ timer=setInterval(()=>{
 ctx.clearRect(0,0,W,H);ground(W,g);
 let fr;
 if(phase==='walk1'){x+=6;fr=t%2?walkA:walkB;if(x>=mid){phase='drop';hold=0}}
-else if(phase==='drop'){fr=walkA;hold++;if(hold===3){fx=x+S;fy=catY+12*S}if(hold>=8)phase='walk2'}
+else if(phase==='drop'){fr=walkA;hold++;if(hold===3){fx=x+S;fy=catY+12*S;fart()}if(hold>=8)phase='walk2'}
 else if(phase==='walk2'){x+=6;fr=t%2?walkA:walkB;if(x>=end)phase='sit'}
 else{fr=seq[lt%seq.length];lt++}
 if(fx!==null){if(fy<rest){fy=Math.min(rest,fy+S*2);if(fy===rest)puff=0}
