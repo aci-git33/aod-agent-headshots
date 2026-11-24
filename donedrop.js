@@ -31,19 +31,19 @@ clearInterval(timer);let k;do{k=Math.floor(Math.random()*fruits.length)}while(k=
 const r=cv.getBoundingClientRect(),dp=window.devicePixelRatio||1,W=r.width,H=r.height;
 cv.width=W*dp;cv.height=H*dp;ctx.setTransform(dp,0,0,dp,0,0);ctx.imageSmoothingEnabled=false;
 const g=H-14,catY=g-19*S,fw=f.spr[0].length*S,rest=g-f.spr.length*S,mid=W*0.32,end=W*0.62;
-let t=0,x=-24*S,phase='walk1',fx=null,fy=null,hold=0,lt=0,puff=-1;
+let t=0,x=-24*S,phase='walk1',fx=null,fy=null,hold=0,lt=0,puff=-1,done=false;
 timer=setInterval(()=>{
 ctx.clearRect(0,0,W,H);ground(W,g);
 let fr;
 if(phase==='walk1'){x+=6;fr=t%2?walkA:walkB;if(x>=mid){phase='drop';hold=0}}
 else if(phase==='drop'){fr=walkA;hold++;if(hold===3){fx=x+S;fy=catY+12*S;fart()}if(hold>=8)phase='walk2'}
 else if(phase==='walk2'){x+=6;fr=t%2?walkA:walkB;if(x>=end)phase='sit'}
-else{fr=seq[lt%seq.length];lt++}
+else{if(lt<seq.length){fr=seq[lt];lt++}else{fr=sit;done=true}}
 if(fx!==null){if(fy<rest){fy=Math.min(rest,fy+S*2);if(fy===rest)puff=0}
 shadow(fx,fw,g);draw(f.spr,fx,fy);
 if(puff>=0&&puff<5){ctx.fillStyle='#CFC8B8';const d=puff*S;ctx.fillRect(fx-S-d,g-S*2-puff,S,S);ctx.fillRect(fx+fw+d,g-S*2-puff,S,S);ctx.fillRect(fx-d,g-S-puff*2,S,S);ctx.fillRect(fx+fw-S+d,g-S-puff*2,S,S);puff++}
 if(fy===rest&&puff>=5&&t%8<4){ctx.fillStyle='#FFFFFF';const sx=fx+fw-S,sy=rest-S*2;ctx.fillRect(sx,sy-S,S,S*3);ctx.fillRect(sx-S,sy,S*3,S)}}
-shadow(x,24*S,g);draw(fr,x,catY);t++;
+shadow(x,24*S,g);draw(fr,x,catY);t++;if(done)clearInterval(timer);
 },125)}
 W0.querySelector('button').onclick=run;run();
 })();
